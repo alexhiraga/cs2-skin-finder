@@ -65,8 +65,9 @@ export function Filter() {
         setSkinsData(skinsData)
     }, [data])
 
-    const handleWeaponChange = (selectedOption: WeaponOptionsProps) => {
+    const handleWeaponChange = (selectedOption: WeaponOptionsProps | null) => {
         if(!selectedOption || !skinsData) return
+
         if(Number(selectedOption.value) > 100) {
             setKnifeId(Number(selectedOption.value))
         } else {
@@ -83,7 +84,8 @@ export function Filter() {
         setSkinsOptions(filteredSkins)
     }
 
-    const handleSkinChange = (selectedOption: SkinsOptionsProps) => {
+    const handleSkinChange = (selectedOption: SkinsOptionsProps | null) => {
+        if(!selectedOption) return
         setSelectedSkin(selectedOption)
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -100,7 +102,7 @@ export function Filter() {
             <h5 className="mb-3">Weapon:</h5>
             <Select
                 options={weaponsOptions}
-                onChange={() => handleWeaponChange}
+                onChange={(selectedOption: WeaponOptionsProps | null) => handleWeaponChange(selectedOption)}
                 value={selectedWeapon}
                 styles={customStyles}
             />
@@ -110,7 +112,7 @@ export function Filter() {
                     <h5 className="mt-6 mb-3">Skin:</h5>
                     <Select
                         options={skinsOptions}
-                        onChange={() => handleSkinChange}
+                        onChange={(selectedOption: SkinsOptionsProps | null) => handleSkinChange(selectedOption)}
                         value={selectedSkin}
                         styles={customStyles}
                     />
