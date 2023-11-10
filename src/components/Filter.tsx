@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react"
 import data from "../skins.json"
 import Select from 'react-select'
@@ -18,12 +19,12 @@ interface SkinsOptionsProps {
 }
 
 const customStyles = {
-    control: (provided) => ({
+    control: (provided: any) => ({
         ...provided,
         backgroundColor: 'black', // set background color
         color: 'white', // set text color
     }),
-    option: (provided, state) => ({
+    option: (provided: any, state: { isSelected: any }) => ({
         ...provided,
         backgroundColor: state.isSelected ? 'var(--dark-purple)' : 'var(--dark-gray)', // set background color for selected and non-selected options
         color: 'white', // set text color for options
@@ -31,7 +32,7 @@ const customStyles = {
             backgroundColor: 'var(--purple)'
         }
     }),
-    singleValue: (provided) => ({
+    singleValue: (provided: any) => ({
         ...provided,
         color: 'var(--light-gray)'
     }),
@@ -99,7 +100,7 @@ export function Filter() {
             <h5 className="mb-3">Weapon:</h5>
             <Select
                 options={weaponsOptions}
-                onChange={handleWeaponChange}
+                onChange={() => handleWeaponChange}
                 value={selectedWeapon}
                 styles={customStyles}
             />
@@ -109,7 +110,7 @@ export function Filter() {
                     <h5 className="mt-6 mb-3">Skin:</h5>
                     <Select
                         options={skinsOptions}
-                        onChange={handleSkinChange}
+                        onChange={() => handleSkinChange}
                         value={selectedSkin}
                         styles={customStyles}
                     />
