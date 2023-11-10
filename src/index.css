@@ -1,0 +1,62 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+:root {
+    --white: #FFF;
+    --light-gray: #ececec;
+    --gray: #e8e6e3;
+    --dark-gray: #181a1b;
+    --red: #b72451;
+    --light-red: #fa709b;
+    --dark-blue: #006989;
+    --dark-red: #700022;
+    --purple: #9604ad;
+    --light-purple: #ea77fc;
+    --dark-purple: #370040;
+    
+    font-family: 'Montserrat', sans-serif;
+    line-height: 1.5;
+    font-weight: 400;
+
+    color-scheme: dark;
+    color: var(--gray);
+    background-color: var(--dark-gray);
+
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-text-size-adjust: 100%;
+}
+
+.content {
+    max-width: 1360px;
+    margin: 0 auto;
+
+    @media (max-width: 1360px) {
+        margin: 0 30px;
+    }
+}
+
+h1, h2 {
+    font-weight: bold;
+}
+
+h3, h4, h5, h6 {
+    font-weight: 500;
+}
+
+h1 { font-size: 2.5rem; }
+h2 { font-size: 2.25rem; }
+h3 { font-size: 2rem; }
+h4 { font-size: 1.75rem; }
+h5 { font-size: 1.5rem; }
+h6 { font-size: 1.25rem; }
+
+span { color: var(--light-gray); }
+
+a:hover {
+    transition: .3s ease-in-out;
+    color: var(--light-purple);
+}
