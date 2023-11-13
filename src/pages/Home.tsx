@@ -5,7 +5,10 @@ import { useEffect, useState } from "react"
 import data from "../skins.json"
 import { Trash } from "@phosphor-icons/react/dist/ssr";
 import { CfgGenerator } from "../components/CfgGenerator";
-
+import { LinkGenerator } from "../components/LinkGenerator";
+import { useParams } from "react-router-dom";
+import lzString from 'lz-string';
+import { SaveCfg } from "../components/SaveCfg";
 
 export interface SkinMap {
     [key: string]: string
@@ -43,11 +46,31 @@ export function Home() {
     const [float, setFloat] = useState<number>(0)
 
     const [inventory, setInventory] = useState<InventoryProps[]>([])
+    const [savedInventories, setSavedInventories] = useState<InventoryProps[]>([])
+
+    const { id } = useParams()
+
+    useEffect(() => {
+        //get inventories from localStorage
+        const savedInventories = (localStorage.getItem('skinInventory'))
+        if(savedInventories) {
+            setSavedInventories(JSON.parse(savedInventories))
+        }
+
+    }, [])
         
     useEffect(() => {
+        const decompressedInventory = id && JSON.parse(lzString.decompressFromEncodedURIComponent(id))
+        if(id) {
+            setInventory(decompressedInventory)
+        }
         const weaponsOptions = Object.entries(data.weapons).map(([_weaponName, weaponData]) => {
             //If the weapon already have skin, return withSkin true
             //add another If for the case no data has been loaded
+            let isConfigured
+            if(decompressedInventory) {
+                isConfigured = decompressedInventory.some((item: { weapon: number; }) => item.weapon === weaponData.id);
+            }
 
             return {
                 value: weaponData.id,
@@ -56,7 +79,7 @@ export function Home() {
                 file: weaponData.file,
                 name: weaponData.name,
 
-                withSkin: false
+                withSkin: isConfigured
             }
         })
 
@@ -66,7 +89,7 @@ export function Home() {
         const skinsData = data.skinMap
         setSkinsData(skinsData)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [data])
+    }, [data, id])
 
     const handleWeaponChange = (selectedOption: WeaponOptionsProps | null) => {
         if(!selectedOption || !skinsData) return
@@ -173,14 +196,23 @@ export function Home() {
             )
         );
     }
+
+    const openSavedInventory = (build: InventoryProps[]) => {
+        setInventory(build)
+        console.log(build)
+    }
     return (
         <div className="content flex">
-            <Sidebar />
+            <Sidebar savedInventories={savedInventories} onOpenSavedInventory={openSavedInventory} />
             <div className="w-5/6">
                 <h1 className="mb-10 mt-5">CS2 Skin Finder & Builder</h1>
 
                 <div className="my-5 flex gap-3">
                     <CfgGenerator inventory={inventory} />
+
+                    <LinkGenerator inventory={inventory} />
+
+                    <SaveCfg inventory={inventory} />
                     
                     <button 
                         className="rounded bg-red p-2 hover:bg-dark-red transition-colors"

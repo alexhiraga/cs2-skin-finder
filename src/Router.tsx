@@ -3,7 +3,7 @@ import { Home } from './pages/Home'
 export function Router() {
     return (
         <Routes>
-            <Route path="/cs2-skin-finder" element={ <Home /> } />
+            <Route path="/cs2-skin-finder/:id?" element={ <Home /> } />
         </Routes>
     )
 }

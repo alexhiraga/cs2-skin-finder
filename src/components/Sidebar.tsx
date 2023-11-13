@@ -2,8 +2,13 @@ import logo from "../assets/notagg-logo.png"
 import faceitLogo from "../assets/faceit-logo.png"
 import gcLogo from "../assets/gamersclub-icon.png"
 import youtubeLogo from "../assets/youtube-logo.png"
+import { InventoryProps } from "../pages/Home"
 
-export function Sidebar() {
+interface Props {
+    savedInventories: InventoryProps[]
+    onOpenSavedInventory: (build: InventoryProps[]) => void
+}
+export function Sidebar({ savedInventories, onOpenSavedInventory }: Props) {
    
     return (
         <div className="h-screen w-1/6 p-3 flex flex-col gap-2">
@@ -27,9 +32,20 @@ export function Sidebar() {
                 </div>
             </div>
 
-            {/* <div className="mt-5 flex flex-col gap-4">
-                <button onClick={navigateToInventory} className="navButton">Inventory builder</button>
-            </div> */}
+            {savedInventories && (
+                <div className="mt-5 flex flex-col gap-4">
+                    <span className="font-bold text-light-purple">Inventory list:</span>
+                    {Object.entries(savedInventories).map(([inventoryName, inventoryItems]) => {
+                        const openInventory = () => {
+                            onOpenSavedInventory(inventoryItems)
+                        }
+
+                        return (
+                            <button onClick={openInventory} className="navButton">{inventoryName}</button>
+                        )
+                    })}
+                </div>
+            )}
         </div>
     )
 }

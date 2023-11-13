@@ -99,3 +99,8 @@ button.deleteButton:hover {
     background-color: var(--red);
     color: white;
 }
+
+.ReactModal__Overlay--after-open {
+    background-color: rgb(0, 0, 0, 0.5)!important;
+    z-index: 30!important;
+}

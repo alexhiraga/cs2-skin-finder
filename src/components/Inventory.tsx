@@ -13,8 +13,8 @@ export function Inventory({ weaponsOptions, onHandleWeaponChange, onHandleSkinDe
         <div className="w-9/12 flex">
             <div className="flex gap-5 flex-wrap">
                 {weaponsOptions && weaponsOptions.map((weapon) => {
-                    const base_url = window.location.pathname;
-                    const imagePath = `${base_url}assets/weapons/${weapon.file}`;
+                    const basePath = "/cs2-skin-finder/"
+                    const imagePath = `${basePath}assets/weapons/${weapon.file}`;
 
                     const selectWeaponSkin = () => {
                         onHandleWeaponChange(weapon)
