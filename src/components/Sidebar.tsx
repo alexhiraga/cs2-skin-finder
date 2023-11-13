@@ -4,6 +4,7 @@ import gcLogo from "../assets/gamersclub-icon.png"
 import youtubeLogo from "../assets/youtube-logo.png"
 
 export function Sidebar() {
+   
     return (
         <div className="h-screen w-1/6 p-3 flex flex-col gap-2">
             <div className="flex gap-2 align-middle mb-7">
@@ -25,6 +26,10 @@ export function Sidebar() {
                     <a className="my-auto" href="https://www.youtube.com/@kikowsz1821" target="_blank">Kikowsz</a>
                 </div>
             </div>
+
+            {/* <div className="mt-5 flex flex-col gap-4">
+                <button onClick={navigateToInventory} className="navButton">Inventory builder</button>
+            </div> */}
         </div>
     )
 }

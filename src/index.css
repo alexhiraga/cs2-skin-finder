@@ -60,3 +60,42 @@ a:hover {
     transition: .3s ease-in-out;
     color: var(--light-purple);
 }
+
+button.navButton {
+    background: none;
+    color: var(--gray);
+    transition: .3s ease-in-out;
+    text-align: left;
+    padding: .25rem .75rem;
+}
+
+button.navButton:hover {
+    color: var(--light-purple);
+    border-left: 2px solid var(--light-purple);
+}
+
+button.saveButton {
+    padding: .5rem 1rem;
+    border-radius: 4px;
+    color: white;
+    transition: .3s ease-in-out;
+    background-color: #0da636;
+}
+
+button.saveButton:hover {
+    background-color: #0b7026;
+}
+
+button.deleteButton {
+    padding: .5rem 1rem;
+    border-radius: 4px;
+    color: var(--light-red);
+    transition: .3s ease-in-out;
+    border: 2px solid var(--red);
+
+}
+
+button.deleteButton:hover {
+    background-color: var(--red);
+    color: white;
+}
