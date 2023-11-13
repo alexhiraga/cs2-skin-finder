@@ -199,7 +199,6 @@ export function Home() {
 
     const openSavedInventory = (build: InventoryProps[]) => {
         setInventory(build)
-        console.log(build)
     }
     return (
         <div className="content flex">

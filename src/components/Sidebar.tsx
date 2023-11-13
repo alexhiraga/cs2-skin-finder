@@ -37,7 +37,7 @@ export function Sidebar({ savedInventories, onOpenSavedInventory }: Props) {
                     <span className="font-bold text-light-purple">Inventory list:</span>
                     {Object.entries(savedInventories).map(([inventoryName, inventoryItems]) => {
                         const openInventory = () => {
-                            onOpenSavedInventory(inventoryItems)
+                            onOpenSavedInventory([inventoryItems])
                         }
 
                         return (
