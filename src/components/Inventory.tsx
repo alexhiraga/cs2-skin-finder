@@ -10,7 +10,7 @@ interface Props {
 export function Inventory({ weaponsOptions, onHandleWeaponChange, onHandleSkinDelete }: Props) {
 
     return (
-        <div className="w-9/12 flex">
+        <div className="flex">
             <div className="flex gap-5 flex-wrap">
                 {weaponsOptions && weaponsOptions.map((weapon) => {
                     const basePath = "/cs2-skin-finder/"

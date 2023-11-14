@@ -2,14 +2,16 @@ import logo from "../assets/notagg-logo.png"
 import faceitLogo from "../assets/faceit-logo.png"
 import gcLogo from "../assets/gamersclub-icon.png"
 import youtubeLogo from "../assets/youtube-logo.png"
-import { InventoryProps } from "../pages/Home"
+import { InventoryProps, SavedInventories } from "../pages/Home"
+import { TrashSimple } from '@phosphor-icons/react/dist/ssr'
 
 interface Props {
-    savedInventories: InventoryProps[]
+    savedInventories: SavedInventories
     onOpenSavedInventory: (build: InventoryProps[]) => void
+    onDeleteBuild: (buildName: string) => void
 }
-export function Sidebar({ savedInventories, onOpenSavedInventory }: Props) {
-   
+export function Sidebar({ savedInventories, onOpenSavedInventory, onDeleteBuild }: Props) {
+
     return (
         <div className="h-screen w-1/6 p-3 flex flex-col gap-2">
             <div className="flex gap-2 align-middle mb-7">
@@ -37,11 +39,20 @@ export function Sidebar({ savedInventories, onOpenSavedInventory }: Props) {
                     <span className="font-bold text-light-purple">Inventory list:</span>
                     {Object.entries(savedInventories).map(([inventoryName, inventoryItems]) => {
                         const openInventory = () => {
-                            onOpenSavedInventory([inventoryItems])
+                            onOpenSavedInventory(inventoryItems)
                         }
-
+                        const deleteInventory = () => {
+                            onDeleteBuild(inventoryName)
+                        }
                         return (
-                            <button onClick={openInventory} className="navButton">{inventoryName}</button>
+                            <div 
+                                className="flex justify-between" 
+                            >
+                                <button onClick={openInventory} className="navButton">{inventoryName}</button>
+                                <button onClick={deleteInventory} className="" title="Delete build">
+                                    <TrashSimple size={18} className="text-red hover:text-light-red transition-colors" />
+                                </button>
+                            </div>
                         )
                     })}
                 </div>

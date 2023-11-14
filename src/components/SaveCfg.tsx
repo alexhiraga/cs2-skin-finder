@@ -5,6 +5,7 @@ import Modal from 'react-modal';
 
 interface Props {
     inventory: InventoryProps[]
+    onUpdateInventory: () => void
 }
 
 
@@ -21,9 +22,10 @@ const customStyles = {
     },
 };
 
-export function SaveCfg({ inventory }: Props) {
+export function SaveCfg({ inventory, onUpdateInventory }: Props) {
     const [isOpen, setIsOpen] = useState<boolean>(false)
     const [buildName, setBuildName] = useState<string>("")
+    const [showError, setShowError] = useState<string>("")
 
     function openModal() {
         setIsOpen(true);
@@ -32,6 +34,7 @@ export function SaveCfg({ inventory }: Props) {
     function closeModal() {
         setBuildName("")
         setIsOpen(false);
+        setShowError("")
     }
 
     const saveBuild = () => {
@@ -39,9 +42,16 @@ export function SaveCfg({ inventory }: Props) {
 
         const existingInventories = existingInventoriesJSON ? JSON.parse(existingInventoriesJSON) : {}
 
+        if(buildName in existingInventories) {
+            setShowError("Inventory name already exists!")
+            return
+        }
         existingInventories[buildName] = inventory
 
         localStorage.setItem('skinInventory', JSON.stringify(existingInventories))
+
+        setIsOpen(false)
+        onUpdateInventory()
     }
 
     return (
@@ -66,8 +76,10 @@ export function SaveCfg({ inventory }: Props) {
                         onChange={(e) => setBuildName(e.target.value)}
                         className="p-3"
                     />
+                    {showError && (
+                        <span className="my-1 text-light-red text-xs">{showError}</span>
+                    )}
                     <div className="flex gap-3">
-
                         <button onClick={saveBuild} className="rounded py-2 px-5 bg-green-600 hover:bg-green-700 transition-colors mt-2">
                             Save build
                         </button>

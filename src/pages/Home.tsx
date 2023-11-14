@@ -13,6 +13,9 @@ import { SaveCfg } from "../components/SaveCfg";
 export interface SkinMap {
     [key: string]: string
 }
+export interface SavedInventories {
+    [key: string]: InventoryProps[]
+}
 
 export interface WeaponOptionsProps {
     value: number
@@ -46,29 +49,23 @@ export function Home() {
     const [float, setFloat] = useState<number>(0)
 
     const [inventory, setInventory] = useState<InventoryProps[]>([])
-    const [savedInventories, setSavedInventories] = useState<InventoryProps[]>([])
+    const [savedInventories, setSavedInventories] = useState<SavedInventories>({})
 
     const { id } = useParams()
 
     useEffect(() => {
-        //get inventories from localStorage
-        const savedInventories = (localStorage.getItem('skinInventory'))
-        if(savedInventories) {
-            setSavedInventories(JSON.parse(savedInventories))
-        }
-
+        updateInventory()
     }, [])
-        
+
     useEffect(() => {
         const decompressedInventory = id && JSON.parse(lzString.decompressFromEncodedURIComponent(id))
-        if(id) {
+        if (id) {
             setInventory(decompressedInventory)
         }
         const weaponsOptions = Object.entries(data.weapons).map(([_weaponName, weaponData]) => {
             //If the weapon already have skin, return withSkin true
-            //add another If for the case no data has been loaded
             let isConfigured
-            if(decompressedInventory) {
+            if (decompressedInventory) {
                 isConfigured = decompressedInventory.some((item: { weapon: number; }) => item.weapon === weaponData.id);
             }
 
@@ -88,21 +85,21 @@ export function Home() {
 
         const skinsData = data.skinMap
         setSkinsData(skinsData)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [data, id])
 
     const handleWeaponChange = (selectedOption: WeaponOptionsProps | null) => {
-        if(!selectedOption || !skinsData) return
+        if (!selectedOption || !skinsData) return
         setFloat(0)
         setPattern(0)
-        setSelectedSkin({label: 'Select...', value: -1})
+        setSelectedSkin({ label: 'Select...', value: -1 })
 
         //if already in inventory, setpattern, setskin, setfloat
-        if(selectedOption.withSkin) {
+        if (selectedOption.withSkin) {
             const itemInInventory = inventory.find(weapon => {
                 return weapon.weapon === selectedOption.value
             })
-            if(itemInInventory) {
+            if (itemInInventory) {
                 setPattern(itemInInventory.pattern)
                 setFloat(itemInInventory.float)
                 setSelectedSkin({
@@ -112,7 +109,7 @@ export function Home() {
             }
         }
 
-        if(Number(selectedOption.value) > 100) {
+        if (Number(selectedOption.value) > 100) {
             setKnifeId(Number(selectedOption.value))
         } else {
             setKnifeId(null)
@@ -129,7 +126,7 @@ export function Home() {
     }
 
     const handleSkinChange = (selectedOption: SkinsOptionsProps | null) => {
-        if(!selectedOption) return
+        if (!selectedOption) return
         setSelectedSkin(selectedOption)
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -142,7 +139,7 @@ export function Home() {
     }
 
     const saveNewWeapon = () => {
-        if(!selectedSkin || !selectedWeapon) return
+        if (!selectedSkin || !selectedWeapon) return
         const newWeapon = {
             skin: selectedSkin.value,
             skinName: selectedSkin.label,
@@ -154,7 +151,7 @@ export function Home() {
 
         const existingWeapon = inventory.findIndex((item) => item.weapon === newWeapon.weapon)
 
-        if(existingWeapon !== -1) {
+        if (existingWeapon !== -1) {
             // if exists, update pattern, skin and float
             const updatedInventory = [...inventory]
             updatedInventory[existingWeapon] = {
@@ -181,14 +178,14 @@ export function Home() {
     const handleSkinDelete = (weaponToRemove: number) => {
         const indexToRemove = inventory.findIndex((item) => item.weapon === weaponToRemove)
 
-        if(indexToRemove !== -1) {
+        if (indexToRemove !== -1) {
             const updatedInventory = [...inventory.slice(0, indexToRemove), ...inventory.slice(indexToRemove + 1)]
             setInventory(updatedInventory)
             setFloat(0)
             setPattern(0)
-            setSelectedSkin({label: 'Select...', value: -1})
+            setSelectedSkin({ label: 'Select...', value: -1 })
         }
-        
+
         //set withSkins false
         setWeaponsOptions((options) =>
             options.map((weapon) =>
@@ -198,35 +195,86 @@ export function Home() {
     }
 
     const openSavedInventory = (build: InventoryProps[]) => {
+        //open skin's build that was saved in localStorage
+        if (!build) return
+
         setInventory(build)
+        const updatedWeaponOptions = weaponsOptions.map((weapon) => {
+
+            const isWeaponInBuild = build.some(savedWeapon => savedWeapon.weapon === weapon.value)
+
+            if (isWeaponInBuild) {
+                return { ...weapon, withSkin: true }
+            } else {
+                return { ...weapon, withSkin: false }
+            }
+        })
+
+        setWeaponsOptions(updatedWeaponOptions)
     }
+
+    const deleteSkins = () => {
+        //delete current skins
+        const updatedWeaponOptions = weaponsOptions.map((weapon) => {
+            if (weapon.withSkin) {
+                return { ...weapon, withSkin: false }
+            } else {
+                return weapon
+            }
+        })
+        setInventory([])
+        setWeaponsOptions(updatedWeaponOptions)
+    }
+
+    const updateInventory = () => {
+        //get inventories from localStorage
+        const savedInventories = (localStorage.getItem('skinInventory'))
+        if (savedInventories) {
+            setSavedInventories(JSON.parse(savedInventories))
+        }
+    }
+
+    const deleteBuild = (buildName: string) => {
+        const updatedSavedInventories = Object.fromEntries(
+            Object.entries(savedInventories).filter(([inventoryName]) => inventoryName !== buildName)
+        );
+
+        setSavedInventories(updatedSavedInventories)
+
+        localStorage.setItem('skinInventory', JSON.stringify(updatedSavedInventories))
+    }
+
     return (
         <div className="content flex">
-            <Sidebar savedInventories={savedInventories} onOpenSavedInventory={openSavedInventory} />
+            <Sidebar savedInventories={savedInventories} onOpenSavedInventory={openSavedInventory} onDeleteBuild={deleteBuild} />
             <div className="w-5/6">
                 <h1 className="mb-10 mt-5">CS2 Skin Finder & Builder</h1>
 
-                <div className="my-5 flex gap-3">
-                    <CfgGenerator inventory={inventory} />
-
-                    <LinkGenerator inventory={inventory} />
-
-                    <SaveCfg inventory={inventory} />
-                    
-                    <button 
-                        className="rounded bg-red p-2 hover:bg-dark-red transition-colors"
-                        title="Delete all skins"
-                    >
-                        <Trash size={22} />
-                    </button>
-                </div>
-
                 <div className="flex justify-between gap-5">
-                    <Inventory 
-                        weaponsOptions={weaponsOptions}
-                        onHandleWeaponChange={handleWeaponChange}
-                        onHandleSkinDelete={handleSkinDelete}
-                    />
+                    <div className="flex-flex-col w-9/12 ">
+                        <div className="my-5 flex gap-3">
+                            <CfgGenerator inventory={inventory} />
+
+                            <LinkGenerator inventory={inventory} />
+
+                            <SaveCfg inventory={inventory} onUpdateInventory={updateInventory} />
+
+                            <button
+                                className="rounded bg-red p-2 hover:bg-dark-red transition-colors"
+                                title="Delete all skins"
+                                onClick={deleteSkins}
+                            >
+                                <Trash size={22} />
+                            </button>
+                        </div>
+
+                        <Inventory
+                            weaponsOptions={weaponsOptions}
+                            onHandleWeaponChange={handleWeaponChange}
+                            onHandleSkinDelete={handleSkinDelete}
+                        />
+                    </div>
+
                     <Filter
                         weaponsOptions={weaponsOptions}
                         selectedWeapon={selectedWeapon}
